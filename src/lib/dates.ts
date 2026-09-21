@@ -1,7 +1,24 @@
-export const appTimeZone =
-  process.env.NEXT_PUBLIC_APP_TIME_ZONE ??
-  process.env.APP_TIME_ZONE ??
-  "America/New_York";
+const defaultTimeZone = "America/New_York";
+
+function resolveTimeZone(candidates: Array<string | undefined>) {
+  for (const candidate of candidates) {
+    // Dashboard env editors often keep the quotes copied from .env.example.
+    const zone = candidate?.trim().replace(/^['"]|['"]$/g, "");
+    if (!zone) continue;
+    try {
+      new Intl.DateTimeFormat("en-US", { timeZone: zone });
+      return zone;
+    } catch {
+      console.warn(`Ignoring invalid APP_TIME_ZONE value: ${candidate}`);
+    }
+  }
+  return defaultTimeZone;
+}
+
+export const appTimeZone = resolveTimeZone([
+  process.env.NEXT_PUBLIC_APP_TIME_ZONE,
+  process.env.APP_TIME_ZONE,
+]);
 
 export function todayKey(date = new Date()) {
   const parts = new Intl.DateTimeFormat("en-US", {
