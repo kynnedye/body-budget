@@ -18,6 +18,16 @@ npm run dev
 
 Open the local URL printed by Next.js.
 
+## Vercel
+
+The homepage queries Postgres, so the deploy will look blank/broken until these are set in **Project → Settings → Environment Variables** (Production + Preview):
+
+- `DATABASE_URL` — same Postgres URL you use locally, with `?schema=body_budget` (Vercel/Neon’s default URL does not include that schema, and Prisma looks for this exact name)
+- `APP_TIME_ZONE` and `NEXT_PUBLIC_APP_TIME_ZONE` — e.g. `America/New_York`
+- `APP_PASSWORD` — optional; set this if you don’t want the public URL wide open
+
+Then redeploy. The build now runs `prisma migrate deploy` and seed so tables exist in production.
+
 ## What is included
 
 - Daily mood, energy, sleep, habits/inputs, symptoms, and notes
