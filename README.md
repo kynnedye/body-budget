@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Body Budget
 
-## Getting Started
+A gentle, personal wellbeing tracker for noticing relationships between habits, inputs, symptoms, mood, energy, and sleep.
 
-First, run the development server:
+## Setup
+
+1. Copy `.env.example` to `.env` and add your Postgres connection. Use the dedicated `body_budget` schema.
+2. Set `APP_TIME_ZONE` and `NEXT_PUBLIC_APP_TIME_ZONE` to the same IANA zone (default `America/New_York`).
+3. Optionally set `APP_PASSWORD` if this should not be open on the local network.
+4. Install and initialize:
 
 ```bash
+npm install
+npm run db:migrate
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the local URL printed by Next.js.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## What is included
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Daily mood, energy, sleep, habits/inputs, symptoms, and notes
+- Editable and archivable trackers with boolean, amount, and severity inputs
+- 7/30/90-day trend charts
+- Full CSV and JSON export
+- Timezone-aware daily date keys
+- Optional password gate via `APP_PASSWORD`
 
-## Learn More
+## Scripts
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run lint`
+- `npm run build`
+- `npm run db:migrate`
+- `npm run db:seed`
+- `npm run db:studio`

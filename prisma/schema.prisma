@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tracker {
+  id        String      @id @default(cuid())
+  name      String
+  kind      TrackerKind
+  valueType ValueType
+  unit      String?
+  emoji     String?
+  color     String      @default("#7c6f64")
+  sortOrder Int         @default(0)
+  isActive  Boolean     @default(true)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  values    DayValue[]
+
+  @@unique([kind, name])
+  @@index([kind, isActive, sortOrder])
+}
+
+model DayLog {
+  id         String     @id @default(cuid())
+  date       DateTime   @unique @db.Date
+  note       String     @default("")
+  mood       Int?
+  energy     Int?
+  sleepHours Float?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  values     DayValue[]
+}
+
+model DayValue {
+  id        String   @id @default(cuid())
+  dayLogId  String
+  trackerId String
+  boolValue Boolean?
+  numValue  Float?
+  severity  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  dayLog    DayLog   @relation(fields: [dayLogId], references: [id], onDelete: Cascade)
+  tracker   Tracker  @relation(fields: [trackerId], references: [id], onDelete: Restrict)
+
+  @@unique([dayLogId, trackerId])
+  @@index([trackerId])
+}
+
+enum TrackerKind {
+  HABIT
+  SYMPTOM
+}
+
+enum ValueType {
+  BOOLEAN
+  NUMBER
+  SEVERITY
+}
