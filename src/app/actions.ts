@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { gateCookieName, gatePassword, gateToken } from "@/lib/auth";
-import { dateFromKey, isValidDateKey } from "@/lib/dates";
+import { dateFromKey, isValidDateKey, todayKey } from "@/lib/dates";
 import { prisma } from "@/lib/prisma";
 
 async function getDayLog(date: string) {
@@ -18,9 +18,17 @@ async function getDayLog(date: string) {
 
 function refresh(date?: string) {
   revalidatePath("/");
+  revalidatePath("/history");
   revalidatePath("/trends");
   revalidatePath("/export");
   if (date) revalidatePath(`/day/${date}`);
+}
+
+export async function openDay(formData: FormData) {
+  const date = String(formData.get("date") ?? "");
+  if (!isValidDateKey(date)) redirect("/history");
+  if (date > todayKey()) redirect("/");
+  redirect(`/day/${date}`);
 }
 
 function requireDate(date: string) {

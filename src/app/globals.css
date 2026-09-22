@@ -203,6 +203,41 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
 .export-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 24px; }
 .fine-print { color: var(--muted); font-size: 13px; line-height: 1.55; }
 
+.jump-form {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.jump-form label { color: var(--muted); font-size: 12px; font-weight: 650; min-width: 180px; flex: 1; }
+.jump-form .field { margin-top: 6px; }
+.jump-form .button { height: 44px; }
+.history-list { display: grid; gap: 8px; }
+.history-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fffdf8;
+  transition: .2s ease;
+}
+.history-row:hover { border-color: var(--sage); background: var(--sage-soft); }
+.history-row h3 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.history-row p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.history-note { max-width: 62ch; line-height: 1.45; }
+.history-note.muted { font-style: italic; }
+.history-today {
+  color: var(--sage);
+  font-family: var(--font-body), sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
 @media (max-width: 760px) {
   .nav-shell { align-items: flex-start; }
   .brand small { display: none; }

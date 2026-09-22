@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { BarChart3, CalendarCheck, Download, SlidersHorizontal } from "lucide-react";
+import { BarChart3, CalendarCheck, Download, History, SlidersHorizontal } from "lucide-react";
 
 const links = [
   { href: "/", label: "Today", icon: CalendarCheck },
+  { href: "/history", label: "History", icon: History },
   { href: "/trends", label: "Trends", icon: BarChart3 },
   { href: "/trackers", label: "Trackers", icon: SlidersHorizontal },
   { href: "/export", label: "Export", icon: Download },
