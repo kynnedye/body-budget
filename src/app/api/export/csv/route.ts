@@ -1,4 +1,5 @@
 import { getExportData } from "@/lib/export-data";
+import { requireUnlockedApi } from "@/lib/session";
 
 function cell(value: unknown) {
   if (value === null || value === undefined) return "";
@@ -7,6 +8,9 @@ function cell(value: unknown) {
 }
 
 export async function GET() {
+  if (!(await requireUnlockedApi())) {
+    return new Response("Unauthorized", { status: 401 });
+  }
   const data = await getExportData();
   const headers = ["date", "mood", "energy", "sleepHours", "note", ...data.trackers.map((tracker) => tracker.name)];
   const rows = data.days.map((day) => [

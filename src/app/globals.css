@@ -58,7 +58,7 @@ a {
   z-index: 20;
 }
 
-.brand, .brand span, .nav-links, .nav-links a {
+.brand, .brand span, .nav-end, .nav-links, .nav-links a {
   display: flex;
   align-items: center;
 }
@@ -88,6 +88,8 @@ a {
   transition: .2s ease;
 }
 .nav-links a:hover { color: var(--ink); background: var(--sage-soft); }
+.nav-end { gap: 8px; }
+.sign-out { margin: 0; }
 
 .page-shell {
   width: min(1060px, calc(100% - 32px));
@@ -239,10 +241,12 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
 }
 
 @media (max-width: 760px) {
-  .nav-shell { align-items: flex-start; }
+  .nav-shell { align-items: center; }
   .brand small { display: none; }
+  .nav-end { flex: 1; justify-content: flex-end; }
   .nav-links { position: fixed; bottom: 12px; left: 16px; right: 16px; justify-content: space-around; padding: 8px; border: 1px solid var(--line); border-radius: 19px; background: rgba(255,254,249,.94); box-shadow: 0 12px 35px rgba(44,51,43,.18); }
   .nav-links a { flex-direction: column; gap: 2px; padding: 5px 10px; font-size: 10px; }
+  .sign-out { position: relative; z-index: 21; }
   .baseline-grid, .tracker-grid, .stats-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr 1fr; }
   .page-shell { padding-top: 38px; }
