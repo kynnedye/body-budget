@@ -5,7 +5,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { gateCookieName, gatePassword, gateToken } from "@/lib/auth";
-import { dateFromKey, isValidDateKey } from "@/lib/dates";
+import { requireUnlocked } from "@/lib/session";
+import { dateFromKey, isValidDateKey, todayKey } from "@/lib/dates";
 import { prisma } from "@/lib/prisma";
 
 async function getDayLog(date: string) {
@@ -18,9 +19,18 @@ async function getDayLog(date: string) {
 
 function refresh(date?: string) {
   revalidatePath("/");
+  revalidatePath("/history");
   revalidatePath("/trends");
   revalidatePath("/export");
   if (date) revalidatePath(`/day/${date}`);
+}
+
+export async function openDay(formData: FormData) {
+  await requireUnlocked();
+  const date = String(formData.get("date") ?? "");
+  if (!isValidDateKey(date)) redirect("/history");
+  if (date > todayKey()) redirect("/");
+  redirect(`/day/${date}`);
 }
 
 function requireDate(date: string) {
@@ -34,6 +44,7 @@ export async function saveBaseline(
   field: "mood" | "energy" | "sleepHours",
   value: number | null,
 ) {
+  await requireUnlocked();
   requireDate(date);
   let next = value;
   if (next != null) {
@@ -50,6 +61,7 @@ export async function saveBaseline(
 }
 
 export async function saveNote(date: string, note: string) {
+  await requireUnlocked();
   requireDate(date);
   await prisma.dayLog.upsert({
     where: { date: dateFromKey(date) },
@@ -65,6 +77,7 @@ export async function saveTrackerValue(
   field: "boolValue" | "numValue" | "severity",
   value: boolean | number | null,
 ) {
+  await requireUnlocked();
   requireDate(date);
   const tracker = await prisma.tracker.findUnique({ where: { id: trackerId } });
   if (!tracker) return;
@@ -90,6 +103,7 @@ export async function createTracker(
   _prev: { error?: string } | null,
   formData: FormData,
 ) {
+  await requireUnlocked();
   const kind = formData.get("kind") === "SYMPTOM"
     ? TrackerKind.SYMPTOM
     : TrackerKind.HABIT;
@@ -136,6 +150,7 @@ export async function createTracker(
 }
 
 export async function toggleTracker(id: string, isActive: boolean) {
+  await requireUnlocked();
   await prisma.tracker.update({ where: { id }, data: { isActive } });
   revalidatePath("/trackers");
   refresh();
@@ -143,8 +158,8 @@ export async function toggleTracker(id: string, isActive: boolean) {
 
 export async function unlockApp(formData: FormData) {
   const password = gatePassword();
-  if (!password) redirect("/");
-  const submitted = String(formData.get("password") ?? "");
+  if (!password) redirect("/login");
+  const submitted = String(formData.get("password") ?? "").trim();
   if (submitted !== password) {
     redirect("/login?error=1");
   }
@@ -157,4 +172,10 @@ export async function unlockApp(formData: FormData) {
     maxAge: 60 * 60 * 24 * 30,
   });
   redirect("/");
+}
+
+export async function lockApp() {
+  const jar = await cookies();
+  jar.delete(gateCookieName());
+  redirect("/login");
 }

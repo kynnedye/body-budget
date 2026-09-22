@@ -1,7 +1,15 @@
 const COOKIE = "bb_gate";
 
+function readSecret(value: string | undefined) {
+  return value?.trim().replace(/^['"]|['"]$/g, "") ?? "";
+}
+
 export function gatePassword() {
-  return process.env.APP_PASSWORD?.trim() || "";
+  return readSecret(process.env.APP_PASSWORD);
+}
+
+export function isGateRequired() {
+  return process.env.NODE_ENV === "production";
 }
 
 export function gateCookieName() {
@@ -26,4 +34,12 @@ export async function isValidGateToken(token: string | undefined) {
     mismatch |= token.charCodeAt(i) ^ expected.charCodeAt(i);
   }
   return mismatch === 0;
+}
+
+export function isPublicPath(pathname: string) {
+  return (
+    pathname === "/login" ||
+    pathname.startsWith("/_next") ||
+    pathname === "/favicon.ico"
+  );
 }

@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { gateCookieName, gatePassword, isValidGateToken } from "@/lib/auth";
+import {
+  gateCookieName,
+  gatePassword,
+  isGateRequired,
+  isPublicPath,
+  isValidGateToken,
+} from "@/lib/auth";
 
 function withPath(request: NextRequest) {
   const headers = new Headers(request.headers);
@@ -8,15 +14,20 @@ function withPath(request: NextRequest) {
   return NextResponse.next({ request: { headers } });
 }
 
+function toLogin(request: NextRequest) {
+  const login = request.nextUrl.clone();
+  login.pathname = "/login";
+  login.search = "";
+  return NextResponse.redirect(login);
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (!gatePassword()) return withPath(request);
+  if (isPublicPath(pathname)) return withPath(request);
 
-  if (
-    pathname === "/login" ||
-    pathname.startsWith("/_next") ||
-    pathname === "/favicon.ico"
-  ) {
+  const password = gatePassword();
+  if (!password) {
+    if (isGateRequired()) return toLogin(request);
     return withPath(request);
   }
 
@@ -24,10 +35,7 @@ export async function middleware(request: NextRequest) {
     return withPath(request);
   }
 
-  const login = request.nextUrl.clone();
-  login.pathname = "/login";
-  login.search = "";
-  return NextResponse.redirect(login);
+  return toLogin(request);
 }
 
 export const config = {

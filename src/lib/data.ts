@@ -14,3 +14,19 @@ export async function getCheckinData(date: string) {
   ]);
   return { trackers, dayLog };
 }
+
+export async function getHistoryDays() {
+  return prisma.dayLog.findMany({
+    where: {
+      OR: [
+        { mood: { not: null } },
+        { energy: { not: null } },
+        { sleepHours: { not: null } },
+        { note: { not: "" } },
+        { values: { some: {} } },
+      ],
+    },
+    orderBy: { date: "desc" },
+    include: { values: true },
+  });
+}
