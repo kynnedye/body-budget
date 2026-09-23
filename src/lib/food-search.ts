@@ -5,49 +5,8 @@ export type FoodSearchHit = {
   kcalPer100g: number;
   servingGrams: number | null;
   servingLabel: string | null;
-  source: "common" | "usda" | "openfoodfacts";
+  source: "usda" | "openfoodfacts";
 };
-
-const COMMON_FOODS: Array<
-  Omit<FoodSearchHit, "id" | "source"> & { id: string }
-> = [
-  { id: "banana", name: "Banana, raw", brand: null, kcalPer100g: 89, servingGrams: 118, servingLabel: "1 medium" },
-  { id: "apple", name: "Apple, raw", brand: null, kcalPer100g: 52, servingGrams: 182, servingLabel: "1 medium" },
-  { id: "orange", name: "Orange, raw", brand: null, kcalPer100g: 47, servingGrams: 131, servingLabel: "1 fruit" },
-  { id: "strawberry", name: "Strawberries, raw", brand: null, kcalPer100g: 32, servingGrams: 152, servingLabel: "1 cup" },
-  { id: "blueberry", name: "Blueberries, raw", brand: null, kcalPer100g: 57, servingGrams: 148, servingLabel: "1 cup" },
-  { id: "avocado", name: "Avocado, raw", brand: null, kcalPer100g: 160, servingGrams: 68, servingLabel: "½ fruit" },
-  { id: "egg", name: "Egg, whole, cooked", brand: null, kcalPer100g: 155, servingGrams: 50, servingLabel: "1 large" },
-  { id: "chicken-breast", name: "Chicken breast, cooked", brand: null, kcalPer100g: 165, servingGrams: 85, servingLabel: "3 oz" },
-  { id: "salmon", name: "Salmon, cooked", brand: null, kcalPer100g: 206, servingGrams: 85, servingLabel: "3 oz" },
-  { id: "ground-beef", name: "Ground beef, cooked, 85% lean", brand: null, kcalPer100g: 250, servingGrams: 85, servingLabel: "3 oz" },
-  { id: "tofu", name: "Tofu, firm", brand: null, kcalPer100g: 144, servingGrams: 85, servingLabel: "3 oz" },
-  { id: "oatmeal", name: "Oatmeal, cooked", brand: null, kcalPer100g: 68, servingGrams: 234, servingLabel: "1 cup" },
-  { id: "white-rice", name: "White rice, cooked", brand: null, kcalPer100g: 130, servingGrams: 158, servingLabel: "1 cup" },
-  { id: "brown-rice", name: "Brown rice, cooked", brand: null, kcalPer100g: 123, servingGrams: 195, servingLabel: "1 cup" },
-  { id: "pasta", name: "Pasta, cooked", brand: null, kcalPer100g: 131, servingGrams: 140, servingLabel: "1 cup" },
-  { id: "bread", name: "Whole wheat bread", brand: null, kcalPer100g: 247, servingGrams: 32, servingLabel: "1 slice" },
-  { id: "bagel", name: "Bagel", brand: null, kcalPer100g: 257, servingGrams: 98, servingLabel: "1 bagel" },
-  { id: "yogurt", name: "Greek yogurt, plain", brand: null, kcalPer100g: 59, servingGrams: 170, servingLabel: "¾ cup" },
-  { id: "milk", name: "Milk, 2%", brand: null, kcalPer100g: 50, servingGrams: 244, servingLabel: "1 cup" },
-  { id: "cheddar", name: "Cheddar cheese", brand: null, kcalPer100g: 403, servingGrams: 28, servingLabel: "1 oz" },
-  { id: "butter", name: "Butter", brand: null, kcalPer100g: 717, servingGrams: 14, servingLabel: "1 tbsp" },
-  { id: "olive-oil", name: "Olive oil", brand: null, kcalPer100g: 884, servingGrams: 14, servingLabel: "1 tbsp" },
-  { id: "peanut-butter", name: "Peanut butter", brand: null, kcalPer100g: 588, servingGrams: 32, servingLabel: "2 tbsp" },
-  { id: "almonds", name: "Almonds", brand: null, kcalPer100g: 579, servingGrams: 28, servingLabel: "1 oz" },
-  { id: "black-beans", name: "Black beans, cooked", brand: null, kcalPer100g: 132, servingGrams: 172, servingLabel: "1 cup" },
-  { id: "broccoli", name: "Broccoli, cooked", brand: null, kcalPer100g: 35, servingGrams: 156, servingLabel: "1 cup" },
-  { id: "spinach", name: "Spinach, raw", brand: null, kcalPer100g: 23, servingGrams: 30, servingLabel: "1 cup" },
-  { id: "potato", name: "Potato, baked", brand: null, kcalPer100g: 93, servingGrams: 173, servingLabel: "1 medium" },
-  { id: "sweet-potato", name: "Sweet potato, baked", brand: null, kcalPer100g: 90, servingGrams: 114, servingLabel: "1 medium" },
-  { id: "coffee", name: "Coffee, black", brand: null, kcalPer100g: 1, servingGrams: 240, servingLabel: "1 cup" },
-  { id: "latte", name: "Latte, with 2% milk", brand: null, kcalPer100g: 43, servingGrams: 240, servingLabel: "8 oz" },
-  { id: "beer", name: "Beer, regular", brand: null, kcalPer100g: 43, servingGrams: 356, servingLabel: "12 oz" },
-  { id: "wine", name: "Wine, red", brand: null, kcalPer100g: 85, servingGrams: 147, servingLabel: "5 oz" },
-  { id: "dark-chocolate", name: "Dark chocolate", brand: null, kcalPer100g: 546, servingGrams: 28, servingLabel: "1 oz" },
-  { id: "ice-cream", name: "Ice cream, vanilla", brand: null, kcalPer100g: 207, servingGrams: 66, servingLabel: "½ cup" },
-  { id: "pizza", name: "Pizza, cheese", brand: null, kcalPer100g: 266, servingGrams: 107, servingLabel: "1 slice" },
-];
 
 function kcalFromNutrient(value: unknown) {
   const n = typeof value === "number" ? value : Number(value);
@@ -146,15 +105,6 @@ async function searchOpenFoodFacts(query: string): Promise<FoodSearchHit[]> {
   });
 }
 
-function searchCommon(query: string): FoodSearchHit[] {
-  const needle = query.toLowerCase();
-  return COMMON_FOODS.filter((food) => food.name.toLowerCase().includes(needle)).map((food) => ({
-    ...food,
-    id: `common:${food.id}`,
-    source: "common",
-  }));
-}
-
 export async function searchFoods(rawQuery: string): Promise<FoodSearchHit[]> {
   const query = rawQuery.trim().slice(0, 80);
   if (query.length < 2) return [];
@@ -166,14 +116,13 @@ export async function searchFoods(rawQuery: string): Promise<FoodSearchHit[]> {
 
   const merged: FoodSearchHit[] = [];
   const seen = new Set<string>();
-  for (const hit of [...searchCommon(query), ...usda, ...packaged]) {
+  for (const hit of [...usda, ...packaged]) {
     const key = `${hit.source}:${hit.name.toLowerCase()}:${hit.brand ?? ""}`;
     if (seen.has(key)) continue;
     seen.add(key);
     merged.push(hit);
-    if (merged.length >= 12) break;
   }
-  return merged;
+  return merged.slice(0, 12);
 }
 
 export function caloriesForGrams(kcalPer100g: number, grams: number) {

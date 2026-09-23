@@ -250,8 +250,8 @@ export function FoodLog({
 
       <p className="fine-print" style={{ marginTop: 16 }}>
         {usdaConfigured
-          ? "Calories come from USDA FoodData Central, Open Food Facts, and a small built-in list. They are estimates."
-          : "Set USDA_API_KEY in Vercel for better generic-food matches. Packaged foods still search Open Food Facts, and common items are built in."}
+          ? "Calories come from USDA FoodData Central and Open Food Facts. They are estimates."
+          : "Set USDA_API_KEY for generic foods like banana or chicken. Packaged items still search Open Food Facts."}
       </p>
     </section>
   );
