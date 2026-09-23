@@ -99,6 +99,55 @@ export async function saveTrackerValue(
   refresh(date);
 }
 
+type FoodInput = {
+  name: string;
+  brand: string | null;
+  calories: number;
+  quantity: number;
+  unit: string;
+  kcalPer100g: number | null;
+  source: string;
+  sourceId: string | null;
+};
+
+export async function addFoodEntry(date: string, input: FoodInput) {
+  await requireUnlocked();
+  requireDate(date);
+  const name = input.name.trim().slice(0, 160);
+  if (!name) throw new Error("Food needs a name");
+  if (!Number.isFinite(input.calories) || input.calories < 0 || input.calories > 20000) {
+    throw new Error("Invalid calories");
+  }
+  if (!Number.isFinite(input.quantity) || input.quantity <= 0 || input.quantity > 20000) {
+    throw new Error("Invalid quantity");
+  }
+  const dayLog = await getDayLog(date);
+  const entry = await prisma.foodEntry.create({
+    data: {
+      dayLogId: dayLog.id,
+      name,
+      brand: input.brand?.trim().slice(0, 120) || null,
+      calories: Math.round(input.calories * 10) / 10,
+      quantity: input.quantity,
+      unit: input.unit.trim().slice(0, 16) || "g",
+      kcalPer100g: input.kcalPer100g,
+      source: input.source.trim().slice(0, 32) || "custom",
+      sourceId: input.sourceId?.trim().slice(0, 80) || null,
+    },
+  });
+  refresh(date);
+  return entry;
+}
+
+export async function removeFoodEntry(date: string, id: string) {
+  await requireUnlocked();
+  requireDate(date);
+  const dayLog = await prisma.dayLog.findUnique({ where: { date: dateFromKey(date) } });
+  if (!dayLog) return;
+  await prisma.foodEntry.deleteMany({ where: { id, dayLogId: dayLog.id } });
+  refresh(date);
+}
+
 export async function createTracker(
   _prev: { error?: string } | null,
   formData: FormData,

@@ -27,15 +27,16 @@ model Tracker {
 }
 
 model DayLog {
-  id         String     @id @default(cuid())
-  date       DateTime   @unique @db.Date
-  note       String     @default("")
+  id         String      @id @default(cuid())
+  date       DateTime    @unique @db.Date
+  note       String      @default("")
   mood       Int?
   energy     Int?
   sleepHours Float?
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
   values     DayValue[]
+  foods      FoodEntry[]
 }
 
 model DayValue {
@@ -52,6 +53,24 @@ model DayValue {
 
   @@unique([dayLogId, trackerId])
   @@index([trackerId])
+}
+
+model FoodEntry {
+  id          String   @id @default(cuid())
+  dayLogId    String
+  name        String
+  brand       String?
+  calories    Float
+  quantity    Float
+  unit        String   @default("g")
+  kcalPer100g Float?
+  source      String
+  sourceId    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  dayLog      DayLog   @relation(fields: [dayLogId], references: [id], onDelete: Cascade)
+
+  @@index([dayLogId])
 }
 
 enum TrackerKind {

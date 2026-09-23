@@ -9,7 +9,7 @@ export async function getCheckinData(date: string) {
     }),
     prisma.dayLog.findUnique({
       where: { date: dateFromKey(date) },
-      include: { values: true },
+      include: { values: true, foods: { orderBy: { createdAt: "asc" } } },
     }),
   ]);
   return { trackers, dayLog };
@@ -24,9 +24,10 @@ export async function getHistoryDays() {
         { sleepHours: { not: null } },
         { note: { not: "" } },
         { values: { some: {} } },
+        { foods: { some: {} } },
       ],
     },
     orderBy: { date: "desc" },
-    include: { values: true },
+    include: { values: true, foods: true },
   });
 }

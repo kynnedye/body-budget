@@ -12,13 +12,15 @@ export async function GET() {
     return new Response("Unauthorized", { status: 401 });
   }
   const data = await getExportData();
-  const headers = ["date", "mood", "energy", "sleepHours", "note", ...data.trackers.map((tracker) => tracker.name)];
+  const headers = ["date", "mood", "energy", "sleepHours", "calories", "note", "foods", ...data.trackers.map((tracker) => tracker.name)];
   const rows = data.days.map((day) => [
     day.date,
     day.mood,
     day.energy,
     day.sleepHours,
+    day.calories ? Math.round(day.calories) : "",
     day.note,
+    day.foods.map((food) => `${food.name} (${Math.round(food.calories)} kcal)`).join("; "),
     ...data.trackers.map((tracker) => day.values[tracker.id] ?? ""),
   ]);
   const csv = [headers, ...rows].map((row) => row.map(cell).join(",")).join("\n");

@@ -21,19 +21,25 @@ export default async function TrendsPage({
     prisma.dayLog.findMany({
       where: { date: { gte: dateFromKey(startKey) } },
       orderBy: { date: "asc" },
-      include: { values: true },
+      include: { values: true, foods: true },
     }),
     prisma.tracker.findMany({ orderBy: { sortOrder: "asc" } }),
   ]);
 
   const logsByDate = new Map(logs.map((log) => [dateKey(log.date), log]));
-  const metrics = trackers.map((tracker) => ({
-    id: tracker.id,
-    name: tracker.name,
-    color: tracker.color,
-  }));
+  const metrics = [
+    { id: "calories", name: "Calories", color: "#9a6b47" },
+    ...trackers.map((tracker) => ({
+      id: tracker.id,
+      name: tracker.name,
+      color: tracker.color,
+    })),
+  ];
   const rows = dateKeysInRange(startKey, endKey).map((key) => {
     const log = logsByDate.get(key);
+    const calories = log?.foods.length
+      ? Math.round(log.foods.reduce((sum, food) => sum + food.calories, 0))
+      : null;
     const row: Record<string, string | number | null> = {
       date: key,
       label: new Intl.DateTimeFormat("en-US", {
@@ -44,6 +50,7 @@ export default async function TrendsPage({
       mood: log?.mood ?? null,
       energy: log?.energy ?? null,
       sleep: log?.sleepHours ?? null,
+      calories,
     };
     for (const tracker of trackers) {
       const value = log?.values.find((entry) => entry.trackerId === tracker.id);
@@ -59,8 +66,11 @@ export default async function TrendsPage({
   });
 
   const loggedDays = logs.filter((log) =>
-    log.mood != null || log.energy != null || log.sleepHours != null || log.note || log.values.length > 0,
+    log.mood != null || log.energy != null || log.sleepHours != null || log.note || log.values.length > 0 || log.foods.length > 0,
   );
+
+  const calorieDays = logs
+    .map((log) => (log.foods.length ? log.foods.reduce((sum, food) => sum + food.calories, 0) : null));
 
   const avg = (values: Array<number | null>) => {
     const present = values.filter((value): value is number => value !== null);
@@ -79,6 +89,7 @@ export default async function TrendsPage({
         <div className="card stat"><strong>{loggedDays.length}</strong><span>days logged in this range</span></div>
         <div className="card stat"><strong>{avg(logs.map((log) => log.mood))}</strong><span>average mood</span></div>
         <div className="card stat"><strong>{avg(logs.map((log) => log.sleepHours))}</strong><span>average sleep hours</span></div>
+        <div className="card stat"><strong>{avg(calorieDays)}</strong><span>average calories</span></div>
       </div>
 
       <section className="card section-card">
