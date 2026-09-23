@@ -23,7 +23,7 @@ export function FoodLog({
   const [query, setQuery] = useState("");
   const [hits, setHits] = useState<FoodSearchHit[]>([]);
   const [searching, setSearching] = useState(false);
-  const [usdaConfigured, setUsdaConfigured] = useState(false);
+  const [configured, setConfigured] = useState(true);
   const [picked, setPicked] = useState<FoodSearchHit | null>(null);
   const [grams, setGrams] = useState(100);
   const [customName, setCustomName] = useState("");
@@ -44,10 +44,10 @@ export function FoodLog({
         }
         const payload = (await response.json()) as {
           items: FoodSearchHit[];
-          usdaConfigured?: boolean;
+          configured?: boolean;
         };
         setHits(payload.items);
-        setUsdaConfigured(Boolean(payload.usdaConfigured));
+        setConfigured(Boolean(payload.configured));
       } catch {
         setHits([]);
       } finally {
@@ -249,9 +249,9 @@ export function FoodLog({
       </div>
 
       <p className="fine-print" style={{ marginTop: 16 }}>
-        {usdaConfigured
-          ? "Calories come from USDA FoodData Central and Open Food Facts. They are estimates."
-          : "Set USDA_API_KEY for generic foods like banana or chicken. Packaged items still search Open Food Facts."}
+        {configured
+          ? "Calories come from USDA FoodData Central. They are estimates."
+          : "Food search needs USDA_API_KEY. Until it is set, add foods by name and calories."}
       </p>
     </section>
   );

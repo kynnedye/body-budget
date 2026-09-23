@@ -25,7 +25,7 @@ The homepage queries Postgres, so the deploy will look blank/broken until these 
 - `DATABASE_URL` — same Postgres URL you use locally, with `?schema=body_budget` (Vercel/Neon’s default URL does not include that schema, and Prisma looks for this exact name)
 - `APP_TIME_ZONE` and `NEXT_PUBLIC_APP_TIME_ZONE` — e.g. `America/New_York`. Enter the bare IANA name with no surrounding quotes; the quotes in `.env.example` are `.env` file syntax, not part of the value.
 - `APP_PASSWORD` — required in production. A shared password for this private log (no quotes). Until it is set, Vercel only shows a lock screen.
-- `USDA_API_KEY` — optional. Free key from [FoodData Central](https://fdc.nal.usda.gov/api-key-signup.html) for generic foods (banana, chicken, rice). Packaged items search Open Food Facts without a key.
+- `USDA_API_KEY` — needed for food search. Free key from [FoodData Central](https://fdc.nal.usda.gov/api-key-signup.html), which covers both generic foods (banana, chicken, rice) and US branded packaged items. Without it you can still add foods by name and calories.
 
 Then redeploy. The build now runs `prisma migrate deploy` and seed so tables exist in production.
 
