@@ -1,4 +1,4 @@
-import { searchFoods } from "@/lib/food-search";
+import { isFoodSearchConfigured, searchFoods } from "@/lib/food-search";
 import { requireUnlockedApi } from "@/lib/session";
 
 export async function GET(request: Request) {
@@ -8,5 +8,5 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q") ?? "";
   const items = await searchFoods(query);
-  return Response.json({ items, usdaConfigured: Boolean(process.env.USDA_API_KEY?.trim()) });
+  return Response.json({ items, configured: isFoodSearchConfigured() });
 }
