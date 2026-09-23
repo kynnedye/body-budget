@@ -1,13 +1,14 @@
 "use client";
 
-import type { DayLog, DayValue, Tracker } from "@prisma/client";
+import type { DayLog, DayValue, FoodEntry, Tracker } from "@prisma/client";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { saveBaseline, saveNote, saveTrackerValue } from "@/app/actions";
+import { FoodLog } from "@/components/food-log";
 import { prettyDate, shiftDate } from "@/lib/dates";
 
-type DayWithValues = DayLog & { values: DayValue[] };
+type DayWithValues = DayLog & { values: DayValue[]; foods: FoodEntry[] };
 type SaveState = "idle" | "saving" | "saved";
 
 export function CheckInForm({
@@ -128,6 +129,7 @@ export function CheckInForm({
       </section>
 
       <TrackerSection title="Inputs" subtitle="Things that might add to—or spend—your capacity." trackers={habits} values={values} onChange={trackerValue} />
+      <FoodLog date={date} foods={dayLog?.foods ?? []} persist={persist} />
       <TrackerSection title="Symptoms" subtitle="What showed up in your body or brain?" trackers={symptoms} values={values} onChange={trackerValue} />
 
       <section className="card section-card">

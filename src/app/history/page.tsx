@@ -64,6 +64,9 @@ export default async function HistoryPage() {
                 log.mood != null ? `Mood ${log.mood}` : null,
                 log.energy != null ? `Energy ${log.energy}` : null,
                 log.sleepHours != null ? `Sleep ${log.sleepHours}h` : null,
+                log.foods.length
+                  ? `${Math.round(log.foods.reduce((sum, food) => sum + food.calories, 0))} kcal`
+                  : null,
                 log.values.length
                   ? `${log.values.length} ${log.values.length === 1 ? "tracker" : "trackers"}`
                   : null,

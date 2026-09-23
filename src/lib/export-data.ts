@@ -7,7 +7,7 @@ export async function getExportData() {
     prisma.tracker.findMany({ orderBy: [{ kind: "asc" }, { sortOrder: "asc" }] }),
     prisma.dayLog.findMany({
       orderBy: { date: "asc" },
-      include: { values: true },
+      include: { values: true, foods: true },
     }),
   ]);
 
@@ -20,6 +20,14 @@ export async function getExportData() {
       energy: log.energy,
       sleepHours: log.sleepHours,
       note: log.note,
+      calories: log.foods.reduce((sum, food) => sum + food.calories, 0),
+      foods: log.foods.map((food) => ({
+        name: food.name,
+        brand: food.brand,
+        calories: food.calories,
+        quantity: food.quantity,
+        unit: food.unit,
+      })),
       values: Object.fromEntries(
         log.values.map((value) => [value.trackerId, recordedMetric(value)]),
       ),

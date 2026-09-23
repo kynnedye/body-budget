@@ -240,6 +240,40 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
   text-transform: uppercase;
 }
 
+.food-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+.food-search .field { margin-top: 0; }
+.food-total { color: var(--clay); font-family: var(--font-display), serif; font-size: 28px; font-weight: 500; }
+.food-hits, .food-list { display: grid; gap: 8px; margin-top: 14px; }
+.food-hit, .food-row, .food-pending {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: #fffdf8;
+  text-align: left;
+}
+.food-hit { width: 100%; cursor: pointer; }
+.food-hit:hover, .food-row:hover { border-color: var(--sage); }
+.food-hit span, .food-row div, .food-pending div { display: grid; gap: 3px; }
+.food-hit small, .food-row p, .food-pending p { color: var(--muted); font-size: 12px; font-weight: 400; }
+.food-pending { flex-wrap: wrap; margin-top: 12px; }
+.food-pending label { color: var(--muted); font-size: 12px; font-weight: 650; width: 110px; }
+.food-pending .field { margin-top: 6px; }
+.food-pending-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.food-row strong { color: var(--clay); }
+.food-custom { margin-top: 18px; }
+.food-custom p { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+.food-custom-row { display: grid; grid-template-columns: 1.6fr .7fr auto; gap: 8px; align-items: center; }
+.food-custom-row .field { margin-top: 0; }
+
 @media (max-width: 760px) {
   .nav-shell { align-items: center; }
   .brand small { display: none; }
@@ -249,6 +283,8 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
   .sign-out { position: relative; z-index: 21; }
   .baseline-grid, .tracker-grid, .stats-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr 1fr; }
+  .food-custom-row { grid-template-columns: 1fr; }
+  .food-pending-actions { margin-left: 0; width: 100%; }
   .page-shell { padding-top: 38px; }
   .section-heading { flex-direction: column; }
 }
