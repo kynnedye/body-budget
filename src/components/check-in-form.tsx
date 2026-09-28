@@ -1,6 +1,6 @@
 "use client";
 
-import type { DayLog, DayValue, FoodEntry, Tracker } from "@prisma/client";
+import type { DayLog, DayValue, FavoriteFood, FoodEntry, Tracker } from "@prisma/client";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
@@ -16,11 +16,13 @@ export function CheckInForm({
   today,
   trackers,
   dayLog,
+  favorites,
 }: {
   date: string;
   today: string;
   trackers: Tracker[];
   dayLog: DayWithValues | null;
+  favorites: FavoriteFood[];
 }) {
   const initialValues = Object.fromEntries(
     (dayLog?.values ?? []).map((value) => [value.trackerId, value]),
@@ -129,7 +131,7 @@ export function CheckInForm({
       </section>
 
       <TrackerSection title="Inputs" subtitle="Things that might add to—or spend—your capacity." trackers={habits} values={values} onChange={trackerValue} />
-      <FoodLog date={date} foods={dayLog?.foods ?? []} persist={persist} />
+      <FoodLog date={date} foods={dayLog?.foods ?? []} favorites={favorites} persist={persist} />
       <TrackerSection title="Symptoms" subtitle="What showed up in your body or brain?" trackers={symptoms} values={values} onChange={trackerValue} />
 
       <section className="card section-card">

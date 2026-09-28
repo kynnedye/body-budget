@@ -183,7 +183,8 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
   padding: 10px 14px; cursor: pointer; font-weight: 650;
 }
 .icon-button { width: 40px; height: 40px; padding: 0; }
-.icon-button[aria-disabled="true"] { opacity: .35; pointer-events: none; }
+.icon-button[aria-disabled="true"], .icon-button:disabled { opacity: .35; pointer-events: none; }
+.icon-button.starred { color: var(--clay); border-color: #e7cfc6; background: #f8efe9; }
 .button.primary { background: var(--ink); color: white; border-color: var(--ink); }
 
 .form-grid { display: grid; grid-template-columns: 1.4fr .7fr .9fr .8fr; gap: 10px; align-items: end; }
@@ -248,7 +249,8 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
 }
 .food-search .field { margin-top: 0; }
 .food-total { color: var(--clay); font-family: var(--font-display), serif; font-size: 28px; font-weight: 500; }
-.food-hits, .food-list { display: grid; gap: 8px; margin-top: 14px; }
+.food-favorites, .food-hits, .food-list { display: grid; gap: 8px; margin-top: 14px; }
+.food-favorites p, .food-hits > .fine-print { margin: 0; }
 .food-hit, .food-row, .food-pending {
   display: flex;
   align-items: center;
@@ -260,19 +262,32 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
   background: #fffdf8;
   text-align: left;
 }
-.food-hit { width: 100%; cursor: pointer; }
+.food-hit { gap: 8px; padding-right: 8px; }
+.food-hit-main {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
 .food-hit:hover, .food-row:hover { border-color: var(--sage); }
-.food-hit span, .food-row div, .food-pending div { display: grid; gap: 3px; }
+.food-hit span, .food-row > div:first-child, .food-pending > div:first-child { display: grid; gap: 3px; }
+.food-row > div:first-child { flex: 1; min-width: 0; }
+.food-row-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 .food-hit small, .food-row p, .food-pending p { color: var(--muted); font-size: 12px; font-weight: 400; }
 .food-pending { flex-wrap: wrap; margin-top: 12px; }
 .food-pending label { color: var(--muted); font-size: 12px; font-weight: 650; width: 110px; }
 .food-pending .field { margin-top: 6px; }
-.food-pending-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.food-pending-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-wrap: wrap; }
 .food-row strong { color: var(--clay); }
 .food-custom { margin-top: 18px; }
 .food-custom p { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
 .food-custom-row { display: grid; grid-template-columns: 1.6fr .7fr auto; gap: 8px; align-items: center; }
 .food-custom-row .field { margin-top: 0; }
+.food-custom-actions { display: flex; align-items: center; gap: 8px; }
 
 @media (max-width: 760px) {
   .nav-shell { align-items: center; }
@@ -284,6 +299,7 @@ textarea.field { min-height: 150px; resize: vertical; line-height: 1.55; }
   .baseline-grid, .tracker-grid, .stats-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr 1fr; }
   .food-custom-row { grid-template-columns: 1fr; }
+  .food-custom-actions { justify-content: flex-end; }
   .food-pending-actions { margin-left: 0; width: 100%; }
   .page-shell { padding-top: 38px; }
   .section-heading { flex-direction: column; }

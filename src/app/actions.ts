@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { gateCookieName, gatePassword, gateToken } from "@/lib/auth";
 import { requireUnlocked } from "@/lib/session";
 import { dateFromKey, isValidDateKey, todayKey } from "@/lib/dates";
+import { favoriteIdentity } from "@/lib/favorites";
 import { prisma } from "@/lib/prisma";
 
 async function getDayLog(date: string) {
@@ -110,9 +111,7 @@ type FoodInput = {
   sourceId: string | null;
 };
 
-export async function addFoodEntry(date: string, input: FoodInput) {
-  await requireUnlocked();
-  requireDate(date);
+function normalizeFood(input: FoodInput) {
   const name = input.name.trim().slice(0, 160);
   if (!name) throw new Error("Food needs a name");
   if (!Number.isFinite(input.calories) || input.calories < 0 || input.calories > 20000) {
@@ -121,22 +120,53 @@ export async function addFoodEntry(date: string, input: FoodInput) {
   if (!Number.isFinite(input.quantity) || input.quantity <= 0 || input.quantity > 20000) {
     throw new Error("Invalid quantity");
   }
+  const kcalPer100g = input.kcalPer100g;
+  return {
+    name,
+    brand: input.brand?.trim().slice(0, 120) || null,
+    calories: Math.round(input.calories * 10) / 10,
+    quantity: input.quantity,
+    unit: input.unit.trim().slice(0, 16) || "g",
+    kcalPer100g:
+      typeof kcalPer100g === "number" && Number.isFinite(kcalPer100g) && kcalPer100g > 0
+        ? kcalPer100g
+        : null,
+    source: input.source.trim().slice(0, 32) || "custom",
+    sourceId: input.sourceId?.trim().slice(0, 80) || null,
+  };
+}
+
+export async function addFoodEntry(date: string, input: FoodInput) {
+  await requireUnlocked();
+  requireDate(date);
+  const food = normalizeFood(input);
   const dayLog = await getDayLog(date);
   const entry = await prisma.foodEntry.create({
-    data: {
-      dayLogId: dayLog.id,
-      name,
-      brand: input.brand?.trim().slice(0, 120) || null,
-      calories: Math.round(input.calories * 10) / 10,
-      quantity: input.quantity,
-      unit: input.unit.trim().slice(0, 16) || "g",
-      kcalPer100g: input.kcalPer100g,
-      source: input.source.trim().slice(0, 32) || "custom",
-      sourceId: input.sourceId?.trim().slice(0, 80) || null,
-    },
+    data: { dayLogId: dayLog.id, ...food },
   });
   refresh(date);
   return entry;
+}
+
+export async function saveFavorite(input: FoodInput) {
+  await requireUnlocked();
+  const food = normalizeFood(input);
+  const identity = favoriteIdentity(food);
+  const favorite = await prisma.favoriteFood.upsert({
+    where: { identity },
+    update: food,
+    create: { identity, ...food },
+  });
+  refresh();
+  return favorite;
+}
+
+export async function removeFavorite(identity: string) {
+  await requireUnlocked();
+  const key = identity.trim().slice(0, 200);
+  if (!key) return;
+  await prisma.favoriteFood.deleteMany({ where: { identity: key } });
+  refresh();
 }
 
 export async function removeFoodEntry(date: string, id: string) {
