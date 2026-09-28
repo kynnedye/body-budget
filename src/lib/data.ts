@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { dateFromKey } from "@/lib/dates";
 
 export async function getCheckinData(date: string) {
-  const [trackers, dayLog] = await Promise.all([
+  const [trackers, dayLog, favorites] = await Promise.all([
     prisma.tracker.findMany({
       where: { isActive: true },
       orderBy: [{ kind: "asc" }, { sortOrder: "asc" }],
@@ -11,8 +11,9 @@ export async function getCheckinData(date: string) {
       where: { date: dateFromKey(date) },
       include: { values: true, foods: { orderBy: { createdAt: "asc" } } },
     }),
+    prisma.favoriteFood.findMany({ orderBy: { updatedAt: "desc" } }),
   ]);
-  return { trackers, dayLog };
+  return { trackers, dayLog, favorites };
 }
 
 export async function getHistoryDays() {
